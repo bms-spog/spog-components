@@ -37,7 +37,7 @@ class controller {
 	self.initContextBrowser = function(browser){
 		$interval.cancel(self.intervalToFetchContextBrowser);
 		//initial context call for first column
-		$http.get('contextbrowser/api/allInstances?components=BASIC&parent=null')
+		$http.get('contextbrowser/api/accessibleResources')
 	        .then(function(response){
 	            if(response.data.length>0){
 	                for(var ii=0;ii<response.data.length;ii++){

@@ -46,6 +46,7 @@ class controller {
 	                    response.data[ii]['hasChildren'] = true;
 	                    response.data[ii]['isOpenable'] = true;
 	                }
+	                response.data.sort(sortResponseDataByNameProperty);
 	                browser.browserContext=initialContext(response.data);
 	                var data = JSON.parse(window.sessionStorage.getItem('selectedIds'));
 					if(data){
@@ -71,6 +72,15 @@ class controller {
 	        }
 	    };
 	}
+
+	function sortResponseDataByNameProperty(a, b) {
+		if (a.name < b.name)
+			return -1;
+		if (a.name > b.name)
+			return 1;
+		return 0;
+	}
+
 	function demoGetChildren(node) {
 	    
 	    var nodeId = node.identifier,
@@ -107,6 +117,7 @@ class controller {
 	                    response.data[ii]['hasChildren'] = true;
 	                    response.data[ii]['isOpenable'] = true;
 	                }
+		            response.data.sort(sortResponseDataByNameProperty);
 	                if(onPageLoad){
 						if(parent.indexOf("enterprises")){
 		                	persistingContextBrowser('sites');

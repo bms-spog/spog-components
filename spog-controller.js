@@ -40,11 +40,11 @@ class controller {
 		$http.get('contextbrowser/api/accessibleResources')
 	        .then(function(response){
 	            if(response.data.length>0){
-	                for(var ii=0;ii<response.data.length;ii++){
+	                for(var i=0;i<response.data.length;i++){
 	                    //add identifiers to children
-	                    response.data[ii]['identifier'] = '00-' + ii;
-	                    response.data[ii]['hasChildren'] = true;
-	                    response.data[ii]['isOpenable'] = true;
+	                    response.data[i]['identifier'] = '00-' + i;
+	                    response.data[i]['hasChildren'] = true;
+	                    response.data[i]['isOpenable'] = true;
 	                }
 	                response.data.sort(sortResponseDataByNameProperty);
 	                browser.browserContext=initialContext(response.data);
@@ -52,13 +52,31 @@ class controller {
 					if(data){
 		                persistingContextBrowser('enterprises');
 		            }
-	            }
-	            else{
-	            	closeSpinner();
+	            } else {
+	            	// In the event that accessibleResources returns an empty set, call allInstances to get all resources
+		            // until APM fixes the bug in accessibleResources
+		            $http.get('contextbrowser/api/allInstances?parent=null&components=BASIC&sortBy=NAME')
+			            .then(function(response2) {
+				            for(var ii=0;ii<response2.data.length;ii++){
+					            //add identifiers to children
+					            response2.data[ii]['identifier'] = '00-' + ii;
+					            response2.data[ii]['hasChildren'] = true;
+					            response2.data[ii]['isOpenable'] = true;
+				            }
+				            response2.data.sort(sortResponseDataByNameProperty);
+				            browser.browserContext=initialContext(response2.data);
+				            var data2 = JSON.parse(window.sessionStorage.getItem('selectedIds'));
+				            if(data2){
+					            persistingContextBrowser('enterprises');
+				            }
+			            }, function(data) {
+			            // Handle error here
+			            closeSpinner();
+			            });
 	            }
 	        }, function(data) {
-			// Handle error here
-			closeSpinner();
+				// Handle error here
+				closeSpinner();
 		});
 
 	    browser.handlers = {
